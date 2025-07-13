@@ -12,31 +12,38 @@ from torch.utils import data
 
 
 class MindDataset(data.Dataset):
-    def __init__(self):
+    def __init__(self, image_size):
         super(MindDataset, self).__init__()
+        self.image_size = image_size
 
         self.path = "C:/Users/Alexf/Pictures/GAN Experiments/VaultGAN/Dataset V1"
 
-        self.images = sorted(glob.glob(os.path.join(self.reference_path, "*.jpg")))
+        self.images = sorted(glob.glob(os.path.join(self.path, "*.jpg")))
 
-        print(f"{len(self.images)} found in {self.path}...")
+        print(f"[*] {len(self.images)} images found in {self.path}...")
 
 
     def __len__(self):
-        return len(self.reference_images)
+        return len(self.images)
     
     def load_image(self, image):
 
         image = cv2.imread(image, cv2.IMREAD_UNCHANGED)
-        assert image.ndim == 3
-        assert image.shape[2] == 3
-        assert np.min(image) >= 0.0
-        assert np.max(image) <= 1.0
-        assert image.dtype == np.float32
-        # image = cv2.resize(image, (192, 256), interpolation = cv2.INTER_LINEAR)
+
+        # resize to desired size
+        image = cv2.resize(image, (self.image_size, self.image_size), interpolation = cv2.INTER_LINEAR)
 
         # normalise to [-1,1]
         image = (image / 127.5) - 1.0
+
+        # convert to float32
+        image = image.astype(np.float32)
+
+        assert image.ndim == 3
+        assert image.shape[2] == 3
+        assert np.min(image) >= -1.0
+        assert np.max(image) <= 1.0
+        assert image.dtype == np.float32
 
         return image
     
@@ -84,7 +91,7 @@ def save_image(image):
     # normalise to 0-255
     image_np = (image_np + 1.0) * 127.5
 
-    return image_np
+    return image_np.astype(np.uint8)
 
 
 def save_images(gts, preds, outdir, step):

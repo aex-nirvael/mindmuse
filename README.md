@@ -1,5 +1,5 @@
-# Fashion Try-On Research Code
+# MindMuse Research Code
 
-This repo takes a dataset of clothing and person images and trains a model that aims to produce an image that shows the person wearing that item of clothing in a naturalistic way.
+This repo trains a GAN and then receives input from a Muse 2 headset to control the GAN in real-time.
 
 Please note it is ongoing research. 

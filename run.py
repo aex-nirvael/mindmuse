@@ -24,8 +24,9 @@ def run():
   ## device
   device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
-  print(f"Using device {device}")
+  print(f"[*] Using device {device}...")
   ## Training parameters
+  image_size = 256
   chan_out = 3
   epochs = 100
   batch_size = 8
@@ -33,15 +34,15 @@ def run():
   outdir = "experiment_1"
   pixel_weight = 0.5
   percep_weight = 0.1
-  disc_step = 2
-  z_dim = 128
+  disc_step = 5
+  z_dim = 512
 
   ## train_dataset
-  dataset = MindDataset()
+  dataset = MindDataset(image_size)
   loader = MindDataLoader(dataset, batch_size)
 
   ## training loop setup
-  model = MindModel(chan_out, z_dim)
+  model = MindModel(chan_out, z_dim, batch_size)
   disc = MindDiscriminator()
   model.to(device)
   disc.to(device)
@@ -72,7 +73,7 @@ def run():
 
         # discriminator pass - fakes
         with torch.no_grad():
-          noise = torch.randn(batch_size, z_dim, 1, 1, device=device)
+          noise = torch.randn((1,1,1,batch_size*z_dim), device=device)
           pred = model(noise)
         disc_pred_fake = disc(pred.detach())
         fake_labels = torch.full_like(disc_pred_fake, 0.1)
