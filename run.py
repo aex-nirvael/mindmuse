@@ -5,6 +5,8 @@ code for running the model
 ### TO-DO ###
 # tidy up code
 # embed a mirror inside the model during inference
+# align the model more closely with StyleGAN2 - i.e. norms, etc.
+# look at data augmentations
 ###
 
 from tqdm import tqdm
@@ -34,7 +36,7 @@ def run():
   outdir = "experiment_1"
   pixel_weight = 0.5
   percep_weight = 0.1
-  disc_step = 5
+  disc_step = 3
   z_dim = 512
 
   ## train_dataset

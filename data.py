@@ -98,10 +98,16 @@ def save_images(gts, preds, outdir, step):
     """
     (B,3,H,W) tensor -> saves each image in batch to out dir
     """
+    batch = int((gts.shape[0] * 2) / 4)
+    images = []
     for i, (gt, pred) in enumerate(zip(gts, preds)):
-        gt_np = save_image(gt)
-        pred_np = save_image(pred)
+        images.append(save_image(gt))
+        images.append(save_image(pred))
 
-        all_images = np.concatenate((gt_np, pred_np), axis=1)
-        cv2.imwrite(f"{outdir}/image_step{step}_batch{i}.png", all_images)
+    horizontals = []
+    for i in range(batch):
+        horizontals.append(np.concatenate((images[int(i*(batch)):int((i+1)*(batch))]), axis=1))
+
+    all_images = np.concatenate(horizontals, axis=0)
+    cv2.imwrite(f"{outdir}/image_step{step}.png", all_images)
 
